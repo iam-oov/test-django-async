@@ -22,6 +22,6 @@ from . import views
 prefix = 'v1/maps'
 
 urlpatterns = [
-    path(f'{prefix}/', views.slowResponseView2, name='slowAsync2')
+    path(f'{prefix}/', views.slowResponseView2, name='slowAsync2'),
     path(f'{prefix}/markers', views.slowResponseView, name='slowAsync')
 ]
