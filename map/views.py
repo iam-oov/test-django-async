@@ -4,6 +4,10 @@ from django.http import JsonResponse
 from .tasks import waitNSeconds
 
 
-def slowResponseView(request):
+def slowResponseView(req):
     waitNSeconds.delay(15)
     return JsonResponse({"response": "ok"})
+
+
+def slowResponseView2(req):
+    return JsonResponse({'ok': 'ok'})

@@ -19,6 +19,9 @@ from django.urls import path
 
 from . import views
 
+prefix = 'v1/maps'
+
 urlpatterns = [
-    path('markers', views.slowResponseView, name='slowAsync')
+    path(f'{prefix}/', views.slowResponseView2, name='slowAsync2')
+    path(f'{prefix}/markers', views.slowResponseView, name='slowAsync')
 ]
