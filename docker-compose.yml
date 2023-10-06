@@ -12,16 +12,17 @@ services:
     tty: true
     env_file:
       - ./enviroments/dev.env
-    depends_on:
-      - m-mysql
-      - m-redis
-      - m-rabbitmq
     volumes:
       - ./compose/supervisor/conf.d:/etc/supervisor/conf.d
       - ./volumes/logs:/var/log
     command: /start.sh
     ports:
       - '8000:8000'
+    depends_on:
+      m-mysql:
+        condition: service_healthy
+      # - m-redis
+      # - m-rabbitmq
 
   m-mysql:
     image: mysql:8.1.0
@@ -31,6 +32,20 @@ services:
       - ./enviroments/dev.env
     ports:
       - '3006:3006'
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-uroot",
+          "-ppass"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
   # m-redis:
   #   image: redis:7.2.1
   #   container_name: m-redis
