@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  m-django:
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile
+    image: m_django
+    container_name: m-django
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    env_file:
+      - ./enviroments/dev.env
+    depends_on:
+      - m-mysql
+      - m-redis
+      - m-rabbitmq
+    volumes:
+      - ./compose/supervisor/conf.d:/etc/supervisor/conf.d
+      - ./volumes/logs:/var/log
+    command: /start.sh
+    ports:
+      - '8000:8000'
+
+  m-mysql:
+    image: mysql:8.1.0
+    restart: always
+    container_name: m-mysql
+    env_file:
+      - ./enviroments/dev.env
+    ports:
+      - '3006:3006'
+  # m-redis:
+  #   image: redis:7.2.1
+  #   container_name: m-redis
+  #   env_file:
+  #     - ./enviroments/dev.env
+  #   ports:
+  #     - '6381:6381'
+
+  # m-rabbitmq:
+  #   image: 3.12.6
+  #   container_name: m-rabbitmq
+  #   env_file:
+  #     - ./enviroments/dev.env
+  #   volumes:
+  #     - ./compose/rabbitmq/watch-rabbitmq.sh:/var/lib/rabbitmq/watch-rabbitmq.sh
+  #   ports:
+  #     - '5672:5672'
+  #     - '15672:15672'
+
+networks:
+  m-net:
+    driver: bridge
