@@ -16,8 +16,8 @@ COPY ["requirements/base.txt", "."]
 RUN pip install -r base.txt
 
 COPY [".", "."]
-COPY ["compose/django/start.sh", "."]
-RUN chmod +x start.sh && chown $USER_NAME:$USER_NAME start.sh
+COPY ["compose/django/start.sh", "/start.sh"]
+RUN chmod +x /start.sh && chown $USER_NAME:$USER_NAME /start.sh
 
 # establecer el usuario para la ejecucion del contenedor
 USER $USER_NAME

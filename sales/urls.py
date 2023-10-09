@@ -19,7 +19,7 @@ from django.urls import path
 
 from . import views
 
-prefix = 'v1/maps'
+prefix = 'v1/sales'
 
 urlpatterns = [
     path(f'{prefix}/', views.slowResponseView2, name='slowAsync2'),

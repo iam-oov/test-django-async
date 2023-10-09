@@ -15,6 +15,7 @@ services:
     volumes:
       - ./compose/supervisor/conf.d:/etc/supervisor/conf.d
       - ./volumes/logs:/var/log
+      - .:/src/app
     command: /start.sh
     ports:
       - '8000:8000'
