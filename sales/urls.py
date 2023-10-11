@@ -19,9 +19,12 @@ from django.urls import path
 
 from . import views
 
-prefix = 'v1/sales'
+PREFIX = 'v1/sales'
 
 urlpatterns = [
-    path(f'{prefix}/', views.slowResponseView2, name='slowAsync2'),
-    path(f'{prefix}/markers', views.slowResponseView, name='slowAsync')
+    path(f'{PREFIX}/', views.slow_response_view_2,
+         name='slow_response_view_2'),
+    path(f'{PREFIX}/markers', views.slow_response_view,
+         name='slow_response_view'),
+    path(f'{PREFIX}/<slug:key>', views.test_redis, name="test_redis")
 ]

@@ -47,13 +47,29 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-  # m-redis:
-  #   image: redis:7.2.1
-  #   container_name: m-redis
-  #   env_file:
-  #     - ./enviroments/dev.env
+
+  # m-celery:
+  #   build:
+  #     context: .
+  #     dockerfile: ./compose/django/Dockerfile
+  #   command: celery -A myapp worker -l info
+  #   volumes:
+  #     - .:/src/app
+  #   depends_on:
+  #     - m-rabbitmq
+
+  m-redis:
+    image: redis:7.2.1
+    container_name: m-redis
+    env_file:
+      - ./enviroments/dev.env
+    ports:
+      - "6381:6381"
+  # m-rabbitmq:
+  #   image: "rabbitmq:3.8-management"
   #   ports:
-  #     - '6381:6381'
+  #     - "5672:5672"
+  #     - "15672:15672"
 
   # m-rabbitmq:
   #   image: 3.12.6
