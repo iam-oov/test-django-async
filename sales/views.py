@@ -27,26 +27,16 @@ redis_instance = redis.StrictRedis(
 )
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET'])
 def test_redis(request, *args, **kwargs):
-    if request.method == 'GET':
-        items = {}
-        count = 0
-        for key in redis_instance.keys("*"):
-            items[key.decode("utf-8")] = redis_instance.get(key)
-            count += 1
-        response = {
-            'count': count,
-            'msg': f"Found {count} items.",
-            'items': items
-        }
-        return Response(response, status=200)
-    elif request.method == 'POST':
-        item = json.loads(request.body)
-        key = list(item.keys())[0]
-        value = item[key]
-        redis_instance.set(key, value)
-        response = {
-            'msg': f"{key} successfully set to {value}"
-        }
-        return Response(response, 201)
+    items = {}
+    count = 0
+    for key in redis_instance.keys("*"):
+        items[key.decode("utf-8")] = redis_instance.get(key)
+        count += 1
+    response = {
+        'count': count,
+        'msg': f"Found {count} items.",
+        'items': items
+    }
+    return Response(response, status=200)

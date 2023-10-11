@@ -63,6 +63,7 @@ services:
     container_name: m-redis
     env_file:
       - ./enviroments/dev.env
+    command: --port 6381
     ports:
       - "6381:6381"
   # m-rabbitmq:
