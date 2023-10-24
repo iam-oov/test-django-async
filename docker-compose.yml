@@ -1,4 +1,4 @@
-version: '3'
+version: 3
 
 services:
   m-django:
@@ -18,45 +18,25 @@ services:
       - .:/src/app
     command: /start.sh
     ports:
-      - '8000:8000'
+      - 8000:8000
     depends_on:
-      m-mysql:
-        condition: service_healthy
-      # - m-redis
-      # - m-rabbitmq
+      - m-mysql
+      - m-redis
+      - m-rabbitmq
 
   m-mysql:
     image: mysql:8.1.0
-    restart: always
+    # restart: always
     container_name: m-mysql
     env_file:
       - ./enviroments/dev.env
     ports:
-      - '3006:3006'
+      - 3006:3006
     healthcheck:
-      test:
-        [
-          "CMD",
-          "mysqladmin",
-          "ping",
-          "-h",
-          "localhost",
-          "-uroot",
-          "-ppass"
-        ]
+      test: [CMD, mysqladmin, ping, -h, localhost, -uroot, -ppass]
       interval: 10s
       timeout: 5s
       retries: 3
-
-  # m-celery:
-  #   build:
-  #     context: .
-  #     dockerfile: ./compose/django/Dockerfile
-  #   command: celery -A myapp worker -l info
-  #   volumes:
-  #     - .:/src/app
-  #   depends_on:
-  #     - m-rabbitmq
 
   m-redis:
     image: redis:7.2.1
@@ -65,23 +45,35 @@ services:
       - ./enviroments/dev.env
     command: --port 6381
     ports:
-      - "6381:6381"
-  # m-rabbitmq:
-  #   image: "rabbitmq:3.8-management"
-  #   ports:
-  #     - "5672:5672"
-  #     - "15672:15672"
+      - 6381:6381
 
-  # m-rabbitmq:
-  #   image: 3.12.6
-  #   container_name: m-rabbitmq
-  #   env_file:
-  #     - ./enviroments/dev.env
-  #   volumes:
-  #     - ./compose/rabbitmq/watch-rabbitmq.sh:/var/lib/rabbitmq/watch-rabbitmq.sh
-  #   ports:
-  #     - '5672:5672'
-  #     - '15672:15672'
+  m-rabbitmq:
+    image: rabbitmq:3.12.7
+    container_name: m-rabbitmq
+    env_file:
+      - ./enviroments/dev.env
+    volumes:
+      - ./compose/rabbitmq/watch-rabbitmq.sh:/var/lib/rabbitmq/watch-rabbitmq.sh
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  m-celery:
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile
+    image: m-django # referencia a django para que no construya img
+    container_name: m-celery
+    restart: unless-stopped
+    env_file:
+      - ./enviroments/dev.env
+    depends_on:
+      - m-mysql
+      - m-redis
+      - m-rabbitmq
+    volumes:
+      - .:/src/app
+    command: celery -A mysite worker --queues surveys,stats --loglevel INFO
 
 networks:
   m-net:

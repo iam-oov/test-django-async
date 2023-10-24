@@ -131,10 +131,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / STATIC_URL
 
-# Celery
-# ...
-
 # Redis
 REDIS_HOST = os.environ.get('REDIS_HOST')
 REDIS_PORT = os.environ.get('REDIS_PORT')
 REDIS_DB = os.environ.get('REDIS_DB')
+
+# CELERY / RABBITMQ SETTINGS
+BROKER_URL = 'amqp://{user}:{password}@{host}:{port}/{vhost}'.format(
+    user=os.environ.get('RABBITMQ_DEFAULT_USER'),
+    password=os.environ.get('RABBITMQ_DEFAULT_PASS'),
+    host=os.environ.get('RABBITMQ_HOST'),
+    port=os.environ.get('RABBITMQ_DEFAULT_PORT'),
+    vhost=os.environ.get('RABBITMQ_DEFAULT_VHOST')
+)
+CELERY_BROKER_URL = BROKER_URL
+CELERY_RESULT_BACKEND = 'redis'
+CELERY_TASK_RESULT_EXPIRES = 60 * 60 * 24 * 7
+
+CELERY_REDIS_HOST = REDIS_HOST
+CELERY_REDIS_PORT = REDIS_PORT

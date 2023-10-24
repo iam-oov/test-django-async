@@ -26,5 +26,4 @@ urlpatterns = [
          name='slow_response_view_2'),
     path(f'{PREFIX}/markers', views.slow_response_view,
          name='slow_response_view'),
-    path(f'{PREFIX}/<slug:key>', views.test_redis, name="test_redis")
 ]

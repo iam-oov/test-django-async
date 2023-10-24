@@ -5,6 +5,12 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
 
 app = Celery('mysite')
 app.config_from_object('django.conf:settings', namespace='CELERY')
+app.conf.update({
+    'imports': (
+        'sales.tasks',
+    ),
+    'task_routes': ('sales.task_router.SurveyRouter',),
+})
 app.autodiscover_tasks()
 
 
